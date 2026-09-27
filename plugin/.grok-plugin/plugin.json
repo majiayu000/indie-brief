@@ -1,0 +1,13 @@
+{
+  "name": "indie-brief",
+  "version": "0.1.0",
+  "description": "读取已导入的独立开发者简报。讨论、产品发布和背景热帖分开返回。",
+  "author": {
+    "name": "majiayu000",
+    "url": "https://github.com/majiayu000"
+  },
+  "homepage": "https://github.com/majiayu000/indie-brief",
+  "repository": "https://github.com/majiayu000/indie-brief",
+  "license": "MIT",
+  "keywords": ["indie", "brief", "hacker-news", "product-hunt", "v2ex", "github"]
+}

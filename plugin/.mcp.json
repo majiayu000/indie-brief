@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "indie-brief": {
+      "command": "indie-brief-mcp"
+    }
+  }
+}

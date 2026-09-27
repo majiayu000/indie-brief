@@ -1,0 +1,63 @@
+{
+  "fetched_at": "2026-09-27T12:00:00+08:00",
+  "sitewide": [
+    {
+      "title": "Random guy knocked on my door",
+      "url": "https://www.reddit.com/r/example/comments/1",
+      "score": 80000,
+      "comments": null
+    }
+  ],
+  "hn": [
+    {
+      "title": "Why is billing so painful",
+      "url": "https://arxiv.org/abs/1",
+      "score": 30,
+      "comments": 10
+    }
+  ],
+  "hn_rss": [
+    {
+      "title": "Why is billing so painful",
+      "url": "https://news.ycombinator.com/item?id=2",
+      "score": 26,
+      "comments": 18
+    }
+  ],
+  "v2ex": [
+    {
+      "title": "独立开发者怎么做付费",
+      "url": "https://www.v2ex.com/t/1",
+      "score": 0,
+      "comments": 20,
+      "subreddit": "分享发现"
+    }
+  ],
+  "ai_today": [],
+  "product_hunt": [
+    {
+      "title": "Acme",
+      "url": "https://www.producthunt.com/products/acme",
+      "category": "invoices for freelancers"
+    }
+  ],
+  "github": [
+    {
+      "title": "foo/bar",
+      "url": "https://github.com/foo/bar",
+      "score": 300,
+      "category": "billing toolkit"
+    }
+  ],
+  "reddit_subs": [],
+  "source_errors": {"lobsters": "HTTP 404"},
+  "catalog_items": {
+    "the-verge": [
+      {
+        "title": "A chip story",
+        "url": "https://www.theverge.com/story",
+        "score": 5
+      }
+    ]
+  }
+}

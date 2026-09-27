@@ -1,0 +1,54 @@
+[project]
+name = "indie-brief"
+version = "0.1.0"
+description = "Read-only indie hacker brief API and Grok Bot template"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "majiayu000" }]
+dependencies = [
+    "fastapi",
+    "httpx",
+    "mcp",
+    "pydantic>=2",
+    "uvicorn",
+]
+
+[project.scripts]
+indie-brief = "indie_brief.cli:main"
+indie-brief-mcp = "indie_brief.mcp_server:main"
+
+[dependency-groups]
+dev = [
+    "mypy",
+    "pytest",
+    "ruff",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["indie_brief"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+packages = ["indie_brief"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["mcp", "mcp.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
