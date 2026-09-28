@@ -66,6 +66,42 @@ def test_missing_url_is_rejected():
         )
 
 
+def test_catalog_source_may_contain_underscores():
+    snapshot = build_snapshot(
+        {
+            "fetched_at": "2026-09-27T12:00:00+00:00",
+            "catalog_items": {
+                "bbc-science_and_environment": [
+                    {
+                        "title": "A lab note",
+                        "url": "https://www.bbc.com/news/science",
+                        "score": 3,
+                    }
+                ]
+            },
+        }
+    )
+    assert snapshot.context[0].source == "bbc-science_and_environment"
+
+
+def test_catalog_source_rejects_a_path():
+    with pytest.raises(BriefError) as caught:
+        build_snapshot(
+            {
+                "fetched_at": "2026-09-27T12:00:00+00:00",
+                "catalog_items": {
+                    "../x": [
+                        {
+                            "title": "nope",
+                            "url": "https://example.com/nope",
+                        }
+                    ]
+                },
+            }
+        )
+    assert caught.value.code == "BAD_SNAPSHOT"
+
+
 def test_empty_snapshot_is_rejected():
     with pytest.raises(BriefError) as caught:
         build_snapshot({"fetched_at": "2026-09-27T12:00:00+00:00"})

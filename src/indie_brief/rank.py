@@ -40,7 +40,7 @@ SOURCE_LABEL = {
     "github": "GitHub",
 }
 
-_CATALOG_NAME = re.compile(r"[a-z0-9-]{1,40}")
+_CATALOG_NAME = re.compile(r"[a-z0-9][a-z0-9_-]{0,63}")
 
 
 def split_focus(raw: str) -> list[str]:
