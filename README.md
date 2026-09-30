@@ -6,7 +6,11 @@
 
 ## 跑起来
 
+需要 Python 3.12+、[uv](https://docs.astral.sh/uv/getting-started/installation/) 和一份 TrendHunter 简报快照；仓库不附带线上数据。
+
 ```bash
+git clone https://github.com/majiayu000/indie-brief.git
+cd indie-brief
 uv sync
 uv run indie-brief key
 uv run indie-brief import-dir /path/to/trendhunter/apps/crawler/data/briefs
@@ -37,7 +41,7 @@ docker run --rm -p 8787:8787 \
 
 ## 在 Grok Bot 里用
 
-新建一个 Bot，把 `template/BOT.md` 的正文交给它。第一次运行时它会问 API 地址和 key，并写到自己电脑上的 `/workspace/indie-brief.env`。例行任务默认关着，要你同意并给时区才每天跑。
+新建一个 Bot，把 [Bot 模板](template/BOT.md)的正文交给它。第一次运行时它会问 API 地址和 key，并写到自己电脑上的 `/workspace/indie-brief.env`。例行任务默认关着，要你同意并给时区才每天跑。
 
 本机 Grok Build 可以装插件。先让命令出现在 `PATH` 上：
 
@@ -45,7 +49,7 @@ docker run --rm -p 8787:8787 \
 uv tool install --editable .
 ```
 
-环境变量要有 `INDIE_BRIEF_API_URL` 和 `INDIE_BRIEF_API_KEY`。插件目录是 `plugin/`，技能在 `plugin/skills/indie-brief/SKILL.md`。
+环境变量要有 `INDIE_BRIEF_API_URL` 和 `INDIE_BRIEF_API_KEY`。插件目录是 [plugin/](plugin/)，使用说明在 [indie-brief 技能](plugin/skills/indie-brief/SKILL.md)。
 
 官方模板市场是策展上架，这个仓库不会自动出现在那里。收费目前就是你自己发 key。这里没有支付页面。
 
