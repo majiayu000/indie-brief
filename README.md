@@ -1,6 +1,6 @@
 # indie-brief
 
-只读的独立开发者简报。它把 TrendHunter 的一份快照收成三栏：讨论、产品、背景。Grok Bot 模板只转述这个接口返回的内容。
+indie-brief 是可自行部署的独立开发者简报 API。它把 TrendHunter 的一份快照收成讨论、产品、背景三栏，提供只读的 FastAPI 接口。Grok Bot 模板只转述这个接口返回的内容。
 
 全站热度、HN 评论和 GitHub star 不是同一个尺度，所以按来源配额取，不把一条高分 Reddit 热帖排进「在吵什么」。
 
@@ -39,6 +39,31 @@ docker run --rm -p 8787:8787 \
 
 快照仍要用 `import` 写进这个 volume。镜像里没有 TrendHunter 的数据。
 
+## 没有生产快照时先试接口
+
+仓库的 [测试样例](tests/fixtures/snapshot.json)包含虚构条目，只用于检查导入、鉴权和关键词筛选。它不代表当天新闻，也不应发成真实简报。完成上面的 `uv sync` 后，在仓库目录运行下面的命令。
+
+```bash
+export INDIE_BRIEF_DATA_DIR="$(mktemp -d)"
+export INDIE_BRIEF_API_KEY="$(uv run indie-brief key)"
+uv run indie-brief import tests/fixtures/snapshot.json
+uv run indie-brief serve
+```
+
+这个临时目录单独保存演示 key 和快照。保持服务运行，在另一个终端读回演示 key 后发起请求。
+
+```bash
+# 把路径换成上一步生成的临时目录
+export INDIE_BRIEF_DATA_DIR=/path/to/demo-directory
+export INDIE_BRIEF_API_KEY="$(cat "$INDIE_BRIEF_DATA_DIR/keys")"
+curl -sS --get \
+  -H "Authorization: Bearer $INDIE_BRIEF_API_KEY" \
+  --data-urlencode 'focus=billing,付费' \
+  http://127.0.0.1:8787/v1/today
+```
+
+响应包含 `snapshot_id`、`fetched_at`、三个内容列表和 `source_errors`。这个样例能匹配 billing 与付费，`focus_matched` 为 true。停止服务后可以删除演示临时目录，再换真实快照与自己的 key。
+
 ## 在 Grok Bot 里用
 
 新建一个 Bot，把 [Bot 模板](template/BOT.md)的正文交给它。第一次运行时它会问 API 地址和 key，并写到自己电脑上的 `/workspace/indie-brief.env`。例行任务默认关着，要你同意并给时区才每天跑。
@@ -60,3 +85,16 @@ uv tool install --editable .
 `GET /v1/today?focus=词1,词2` 需要 `Authorization: Bearer <key>`。
 
 返回的 `arguments`、`products`、`context` 都来自已导入的快照。`focus` 对不上时三个列表是空的，`focus_matched` 为 false，同时仍返回 `source_errors`。
+
+## 请求失败时先查什么
+
+- `/health` 返回正常只说明进程存活。简报时间看 `/v1/today` 的 `fetched_at`，上游采集问题看 `source_errors`。
+- 401 表示 Bearer key 缺失或不匹配。检查客户端发送的 key 与服务使用的临时目录或 `INDIE_BRIEF_API_KEYS` 是否一致。
+- 404 表示服务的数据目录里还没有可读取的快照。先在同一个 `INDIE_BRIEF_DATA_DIR` 下运行 `import`，再查询接口。
+- `focus_matched` 为 false 时，改用样例已包含的关键词，或不传 `focus` 查看完整三栏。接口不会为没有匹配的关键词编出内容。
+
+## 版本、许可和反馈
+
+源码包版本见 [pyproject.toml](pyproject.toml)，使用 [MIT 许可证](LICENSE)。安装入口是上面的源码步骤。Bot 模板与本机插件的入口见[在 Grok Bot 里用](#在-grok-bot-里用)。
+
+问题反馈提交到 [GitHub issues](https://github.com/majiayu000/indie-brief/issues)，附上运行命令、状态码和脱敏后的错误内容。请保留快照时间，移除 key 和私有快照条目。
