@@ -21,8 +21,8 @@ def import_file(data_dir: Path, path: Path) -> Snapshot:
     except json.JSONDecodeError as exc:
         raise BriefError("BAD_SNAPSHOT", f"{path} 不是合法 JSON: {exc}") from exc
     snapshot = build_snapshot(payload)
-    write_snapshot(data_dir, snapshot)
-    return snapshot
+    stored = write_snapshot(data_dir, snapshot)
+    return _read_snapshot(stored)
 
 
 def import_dir(data_dir: Path, directory: Path) -> list[Snapshot]:
@@ -38,6 +38,15 @@ def import_dir(data_dir: Path, directory: Path) -> list[Snapshot]:
 
 def write_snapshot(data_dir: Path, snapshot: Snapshot) -> Path:
     path = snapshot_path(data_dir, snapshot.snapshot_id)
+    if path.is_file():
+        try:
+            current = _read_snapshot(path)
+        except BriefError:
+            pass  # A valid import can repair an invalid stored snapshot.
+        else:
+            if current.fetched_at > snapshot.fetched_at:
+                _update_latest(data_dir, current)
+                return path
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(".json.tmp")
     temporary.write_text(snapshot.model_dump_json(indent=2), encoding="utf-8")
@@ -54,6 +63,10 @@ def read_latest(data_dir: Path) -> Snapshot:
     path = snapshot_path(data_dir, snapshot_id)
     if not path.is_file():
         raise BriefError("NO_SNAPSHOT", f"最新快照文件不存在: {snapshot_id}")
+    return _read_snapshot(path)
+
+
+def _read_snapshot(path: Path) -> Snapshot:
     try:
         return Snapshot.model_validate_json(path.read_text(encoding="utf-8"))
     except ValueError as exc:

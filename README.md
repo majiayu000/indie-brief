@@ -86,6 +86,10 @@ uv tool install --editable .
 
 返回的 `arguments`、`products`、`context` 都来自已导入的快照。`focus` 对不上时三个列表是空的，`focus_matched` 为 false，同时仍返回 `source_errors`。
 
+最新快照按完整的 `fetched_at` 比较。`snapshot_id` 按 UTC 秒生成；同一秒导入多份快照时，
+保留 `fetched_at` 较新的一份，时间完全相同时保留最后导入的一份。导入函数返回实际保留的
+快照；`import-dir` 输出的数量是处理的文件数，不是新增的快照编号数。
+
 ## 请求失败时先查什么
 
 - `/health` 返回正常只说明进程存活。简报时间看 `/v1/today` 的 `fetched_at`，上游采集问题看 `source_errors`。
